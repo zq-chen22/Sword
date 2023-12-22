@@ -88,7 +88,7 @@ class HunGuangSweepSword(state.State):
 
     def deal(self):
         if self.owner.property.expectedDamage > 0:
-            affect_util.SplashHurt(damage = self.owner.property.expectedDamage, position = self.owner.position, owner = self.owner, ownerSkill = self.owner.skills[7])
+            self.owner.skills[7].addAffect(affect_util.SplashHurt(damage = self.owner.property.expectedDamage, position = self.owner.position, owner = self.owner, ownerSkill = self.owner.skills[7]))
             self.owner.recoverEndurance(self.endurance)
 
     def narration(self):

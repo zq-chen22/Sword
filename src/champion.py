@@ -120,6 +120,11 @@ class Champion:
         if policy == "token":
             self.chooseSkillFunc = self.chooseSkillToken
             self.token = kwarg['token']
+        if policy == "mix":
+            self.chooseSkillFunc = self.chooseSkillMix
+            if 'token' in kwarg.keys():
+                self.token = kwarg['token']
+
 
     def midTurn(self, **kwarg):
         if "log" in kwarg.keys():
@@ -165,7 +170,20 @@ class Champion:
                 self.tokenIndex += 1
                 return skill
         return None
-
+    
+    def chooseSkillMix(self):
+        if self.tokenIndex < len(self.token):
+            return self.chooseSkillToken()
+        instruction = input("Please add some action token or input 'random' for random mode or 'input' for input mode.\n")
+        if instruction == "random":
+            self.chooseSkillFunc = self.chooseSkillRandom
+            return self.chooseSkillFunc()
+        if instruction == "input":
+            self.chooseSkillFunc = self.chooseSkillInput
+            return self.chooseSkillFunc()
+        self.token.append(instruction)
+        return self.chooseSkillToken()
+        
     def hasState(self, stateName):
         for state in self.states:
             if state.name == stateName:

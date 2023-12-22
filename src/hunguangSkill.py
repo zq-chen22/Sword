@@ -183,7 +183,7 @@ class HunGuangE(skill.Skill):
     def cast(self):
         super().cast(endurance = self.owner.endurance)
         self.owner.getState(HunGuangSweepSword(endurance = self.owner.endurance))
-        self.owner.getState(state_util.Invincible(duration = 1))
+        self.owner.getState(state_util.Invincible(duration = 0))
         self.addAffect(HunGuangRealDamagePasitiveFeedback(position = self.owner.position, owner = self.owner, ownerSkill = self))
         self.owner.endurance = 0
         self.owner.isMovable = False

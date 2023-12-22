@@ -95,6 +95,19 @@ class TargetSkill(Skill):
                 self.targets.append(target)
                 return target
     
+    def getMixTarget(self):
+        if self.tokenIndex < len(self.token):
+            return self.getTokenTarget()
+        instruction = input("Please add some action token or input 'random' for random mode or 'input' for input mode.\n")
+        if instruction == "random":
+            self.getTarget = self.getRandomTarget
+            return self.getTarget()
+        if instruction == "input":
+            self.getTarget = self.getInputTarget
+            return self.getTarget()
+        self.owner.token.append(instruction)
+        return self.getTokenTarget()
+
     def switchPolicy(self, policy):
         if policy == "random":
             self.getTarget = self.getRandomTarget
@@ -102,6 +115,10 @@ class TargetSkill(Skill):
             self.getTarget = self.getInputTarget
         if policy == "token":
             self.getTarget = self.getTokenTarget
+        if policy == "mix":
+            self.getTarget = self.getMixTarget
+
+
 
     def narration(self):
         nar = self.name

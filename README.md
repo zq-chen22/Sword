@@ -11,3 +11,10 @@ python tests/test_game.py
 欢迎一切issue、collaboration或bug update
 
 具体游戏内容请参考华山论剑2.5.2.docx
+
+更新历史
+```
+2.5.2
+2023-12-18 上传2.5.2版本
+2023-12-19 解决了浑光宗横扫千军反弹伤害无法正确触发和尘术的bug
+```
