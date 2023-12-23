@@ -1,4 +1,6 @@
 import random
+import pygame
+from settings import *
 
 class SkillShoot():
     def __init__(self, skill, **kwargs):
@@ -11,6 +13,7 @@ class Skill:
         self.name = "default skill"
         self.button = None
         self.labels = []
+        self.showTitle = "测试技能"
 
     def addLabels(self, *arg):
         for label in arg:
@@ -55,6 +58,32 @@ class Skill:
 
     def switchPolicy(self, policy):
         pass
+
+    def showAt(self, pos):
+        WIN = pygame.display.get_surface()
+        lines = []
+        font = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 50)
+        charFont = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 70)
+        if self.isCastable():
+            color = MAROON
+            buttonColor = SALMON
+        else:
+            color = IRON
+            buttonColor = GRAY
+        char = charFont.render(self.button,True, buttonColor)
+        WIN.blit(char, (pos[0]-10, pos[1]-40))
+        for l in range(int((len(self.showTitle)+3)/4)):
+            for i in range(4):
+                if l * 4 + i + 1 > len(self.showTitle):
+                    break
+                char = font.render(self.showTitle[l*4 + i],True, color)
+                if i == 0:
+                    lines.append((char, (pos[0] + 50 * l, pos[1])))
+                else:
+                    lines.append((char, (lines[-1][1][0], lines[-1][0].get_height() + lines[-1][1][1])))
+        for i in lines:
+            WIN.blit(i[0], i[1])
+
 
 class TargetSkill(Skill):
     def __init__(self):
@@ -133,3 +162,4 @@ class GiveUp(Skill):
         self.setName("End")
         self.addLabels("anyState")
         self.setButton(".")
+        self.showTitle = "终结回合"

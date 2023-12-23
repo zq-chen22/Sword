@@ -11,6 +11,7 @@ class HunGuangAttack(skill.TargetSkill):
         self.setName("Auto Attack")
         self.setButton("A")
         self.addLabels("hurt")
+        self.showTitle = "剑击"
         
     def isCastable(self):
         if super().isCastable() and self.owner.isMovable and self.owner.hasSword and self.owner.endurance > 0 and self.allTargets() != []:
@@ -46,6 +47,7 @@ class HunGuangGetSword(skill.Skill):
         super().__init__()
         self.setName("Get Sword")
         self.setButton("A")
+        self.showTitle = "召剑"
 
     def isCastable(self):
         if super().isCastable() and self.owner.isMovable and not self.owner.hasSword:
@@ -63,6 +65,7 @@ class HunGuangStudy(skill.Skill):
         super().__init__()
         self.setName("Study")
         self.setButton("S")
+        self.showTitle = "冥想"
 
     def isCastable(self):
         if super().isCastable() and self.owner.isMovable:
@@ -81,6 +84,7 @@ class HunGuangMove(skill.TargetSkill):
         self.setButton("M")
         self.addLabels("move")
         self.getTarget = self.getRandomTarget
+        self.showTitle = "驰越"
 
     def allTargets(self):
         return self.owner.position.neighbors
@@ -108,6 +112,7 @@ class HunGuangQ1(skill.Skill):
         self.setName("Q-1")
         self.setButton("Q")
         self.addLabels("spell")
+        self.showTitle = "浑光起"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasSword and self.owner.endurance > 0 and self.owner.isMovable and not self.owner.hasState("hoistSword"):
@@ -127,6 +132,7 @@ class HunGuangQ2(skill.Skill):
         self.setButton("Q")
         self.addLabels("hurt" ,"spell")
         self.layer = 1
+        self.showTitle = "浑光坠"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasSword and self.owner.hasState("hoistSword"):
@@ -155,6 +161,7 @@ class HunGuangW(skill.Skill):
         self.setName("W")
         self.setButton("W")
         self.addLabels("spell")
+        self.showTitle = "和尘术"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasSword and self.owner.endurance > 0 and self.owner.isMovable and not self.owner.hasState("heChen"):
@@ -174,6 +181,7 @@ class HunGuangE(skill.Skill):
         self.setButton("E")
         self.addLabels("hurt", "spell")
         self.canUse = True
+        self.showTitle = "横扫千军"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasSword and self.owner.endurance > 0 and self.owner.isMovable and self.canUse:
@@ -199,6 +207,7 @@ class HunGuangR1(skill.TargetSkill):
         self.setButton("R")
         self.addLabels("spell", "move")
         self.getTarget = self.getRandomTarget
+        self.showTitle = "神兵无影"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasSword and self.owner.isMovable and self.owner.hasUtimate and not self.owner.hasState("hoistSword") and self.allTargets() != []:
@@ -225,6 +234,7 @@ class HunGuangR2(skill.TargetSkill):
         self.setName("R-2")
         self.setButton("R")
         self.addLabels("spell")
+        self.showTitle = "神兵天降"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasState("onSky"):

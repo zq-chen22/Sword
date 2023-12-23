@@ -36,7 +36,6 @@ class GameGround:
         for champion in self.champions:
             champion.midTurn(log = self.motionLog)
         
-
     def afterTurn(self):
         while True:
             priorities = []

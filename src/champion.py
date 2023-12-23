@@ -1,5 +1,6 @@
 # The champions manipulated by people.
 import random
+from settings import *
 
 class InTurnProperty:
     def __init__(self):
@@ -8,6 +9,10 @@ class InTurnProperty:
         self.isControled = False
         self.skillAffects = []
         self.expectedDamage = 0
+
+# class WindowProperty:
+#     def __init__(self):
+#         self.
 
 class Champion:
 
@@ -35,6 +40,8 @@ class Champion:
         self.nextTurnStates = []
         self.property = InTurnProperty()
         self.propertyHistory = []
+        self.showPosition = "Left"
+        # self.window = WindowProperty()
 
     def narration(self):
         nar = f"one {self.title} named {self.name} at {self.position.name} with health {self.health}/{self.maxHealth} and {len(self.states)} states"
@@ -189,6 +196,31 @@ class Champion:
             if state.name == stateName:
                 return True
         return False
+
+    # window display attributes
+    def showSkills(self):
+        buttonDict = {}
+        for skill in self.skills:
+            if skill.button in buttonDict.keys():
+                buttonDict[skill.button].append(skill)
+            else:
+                buttonDict[skill.button] = [skill]
+        if self.showPosition == "Left":
+            skillPos = [0.5 * (WIDTH - 70 * len(buttonDict.keys())) , HEIGHT - 250]
+        for i, k in enumerate(buttonDict.keys()):
+            isActive = False
+            for skill in buttonDict[k]:
+                if skill.isCastable():
+                    skill.showAt(skillPos)
+                    isActive = True
+                    break
+            if not isActive:
+                buttonDict[k][0].showAt(skillPos)
+            if self.showPosition == "Left":
+                skillPos[0] += int((len(skill.showTitle)-1)/4) * 50 + 70
+
+            
+
 
 if __name__ == "__main__":
     x = Champion()
