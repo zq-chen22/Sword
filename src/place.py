@@ -10,6 +10,8 @@ class Place:
         self.name = f"place{Place.placeId}"
         self.index = Place.placeId
         self.nextTurnAffects = []
+        self.screenPos = None
+        self.cname = f"地点{Place.placeId}"
     
     def setName(self, name):
         self.name = name
@@ -40,5 +42,10 @@ class Place:
         narration = f"{self.index}.{self.name} with champions {[champion.name for champion in self.champions]}."
         return narration
 
+    def showAt(self, pos = None):
+        pass
+
     def __str__(self):
         return f"{self.index}.{self.name}"
+
+

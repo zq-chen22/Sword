@@ -1,6 +1,10 @@
 # The champions manipulated by people.
 import random
 from settings import *
+import pygame
+import cv2
+import numpy as np
+import util
 
 class InTurnProperty:
     def __init__(self):
@@ -41,6 +45,9 @@ class Champion:
         self.property = InTurnProperty()
         self.propertyHistory = []
         self.showPosition = "Left"
+        self.state = "beforeTurn"
+        self.ctitle = "无宗门"
+        self.cname = "子虚"
         # self.window = WindowProperty()
 
     def narration(self):
@@ -99,13 +106,15 @@ class Champion:
         state.setOwner(self)
 
     def beforeTurn(self, **kwarg):
+        self.state = "beforeTurn"
         self.propertyHistory.append(self.property)
         self.property = InTurnProperty()
 
     def midTurn(self, **kwarg):
-        pass
+        self.state = "midTurn"
 
     def afterTurn(self, **kwarg):
+        self.state = "afterTurn"
         self.settleAllState(**kwarg)
 
     def __str__(self):
@@ -206,7 +215,36 @@ class Champion:
             else:
                 buttonDict[skill.button] = [skill]
         if self.showPosition == "Left":
-            skillPos = [0.5 * (WIDTH - 70 * len(buttonDict.keys())) , HEIGHT - 250]
+            skillPos = [0.5 * (WIDTH - 70 * len(buttonDict.keys())) + 50 , HEIGHT - 250]
+        
+        pos = (skillPos[0]-70, skillPos[1])
+        WIN = pygame.display.get_surface()
+        lines = []
+        font = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 50)
+        charFont = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 70)
+        color = MAROON
+        buttonColor = SALMON
+        if self.state == "beforeTurn":
+            title = "初"
+        elif self.state == "midTurn":
+            title = "中"
+        elif self.state == "afterTurn":
+            title = "末"
+        title = f"回合{title}"
+        char = charFont.render("*",True, buttonColor)
+        WIN.blit(char, (pos[0]+15, pos[1]-40))
+        for l in range(int((len(title)+4)/5)):
+            for i in range(5):
+                if l * 4 + i + 1 > len(title):
+                    break
+                char = font.render(title[l*4 + i],True, color)
+                if i == 0:
+                    lines.append((char, (pos[0] + 50 * l, pos[1])))
+                else:
+                    lines.append((char, (lines[-1][1][0], lines[-1][0].get_height() + lines[-1][1][1])))
+        for i in lines:
+            WIN.blit(i[0], i[1])
+
         for i, k in enumerate(buttonDict.keys()):
             isActive = False
             for skill in buttonDict[k]:
@@ -219,9 +257,63 @@ class Champion:
             if self.showPosition == "Left":
                 skillPos[0] += int((len(skill.showTitle)-1)/4) * 50 + 70
 
+    
+    def showStates(self, pos):
+        WIN = pygame.display.get_surface()
+        if self.showPosition == "Left":
+            font1 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 35)
+            font2 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 25)
+            title = font1.render(self.ctitle, True, BLACK)
+            state_pos = pos
+            for state in self.states:
+                if state.visiable:
+                    state_title = font1.render(state.cname, True, BLACK)
+                    WIN.blit(state_title, state_pos) 
+                    if state.getCsubname() is not None:
+                        state_subtitle = font2.render(state.getCsubname(), True, BLACK)
+                        WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
+                    state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
+
+    def showHealth(self, pos):
+        WIN = pygame.display.get_surface()
+        dot_pos = pos
+        for i in range(self.maxHealth):
+            if i < self.health:
+                color = util.hex_to_bgr(FIREBRICK)
+            else:
+                color = util.hex_to_bgr(GRAY)
+            img = cv2.imread(os.path.join(PATH, "graphics", "property", "dot.jpg"))
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+            # print(np.linalg.norm(img[:, :, :]/255, axis = 2) > 0.9)
+            img[np.linalg.norm(img[:, :, :]/255, axis = 2) ** 2 > 2.8, 3] = 0
+            # for i in range(img.shape[0]):
+            #     for j in range(img.shape[1]):
+            #         for k in range(3):
+            #             img[i, j, k] = int(255 - (1 - img[i, j, k]/255) * (255 - color[2-k]))
+            img[:, :, :3] = np.floor(255 - (1-img[:, :, :3]/255) * (255 - np.array(color)))
+            health_sample = pygame.image.frombuffer(img.tostring(), img.shape[1::-1], "BGRA")
+            health_sample = pygame.transform.scale(health_sample, (50, 50 * health_sample.get_height() / health_sample.get_width()))
+            WIN.blit(health_sample, dot_pos)
+            dot_pos = (dot_pos[0], dot_pos[1] + health_sample.get_height())
+
+    def showBar(self):
+        WIN = pygame.display.get_surface()
+        if self.showPosition == "Left":
+            pos = (50, 100)
+            font1 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 40)
+            font2 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 50)
+            color = MAROON
+            title = font1.render(self.ctitle, True, BLACK)
+            title_pos = pos
+            name = font2.render(self.cname, True, color)
+            name_pos = (pos[0] + title.get_height(), pos[1] + title.get_height())
+            self.showHealth((pos[0], pos[1] + 2 * title.get_height()))
+            self.showStates((pos[0] + 1.5 * title.get_height(), pos[1] + 2.5 * title.get_height()))
+            WIN.blit(title, title_pos)
+            WIN.blit(name, name_pos)
+
+
             
-
-
 if __name__ == "__main__":
     x = Champion()
     y = Champion()

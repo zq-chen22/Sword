@@ -16,6 +16,9 @@ SCARLET = "#FF2400"
 IRON = '#48494B'
 STEEL = '#777B7E'
 GRAY = '#999999'
+INK = '#C0C0C0'
+CRIMSON = "#DC143C"
+FIREBRICK = "#B22222"
 
 PATH = os.path.dirname(os.path.dirname(__file__))
 MODE = "window"  # "window"/"terminal"/"none"

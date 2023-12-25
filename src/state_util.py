@@ -6,6 +6,8 @@ class Hurt(State):
         self.damage = damage
         self.name = "Hurt"
         self.priority = 1000
+        self.cname = "受伤"
+        self.csubname = f"×{self.damage}"
 
     def deal(self):
         damage = self.damage
@@ -36,6 +38,8 @@ class RealHurt(State):
         self.damage = damage
         self.name = "RealHurt"
         self.priority = 1000
+        self.cname = "真伤"
+        self.csubname = f"×{self.damage}"
 
     def deal(self):
         damage = self.damage
@@ -59,6 +63,8 @@ class Heal(State):
         self.damage = damage
         self.name = "Heal"
         self.priority = 2000
+        self.cname = "治疗"
+        self.csubname = f"×{self.damage}"
 
     def deal(self):
         self.owner.health = min(self.damage + self.owner.health, self.owner.maxHealth)
@@ -73,6 +79,7 @@ class Sheild(State):
         self.name = "Sheild"
         self.priority = 2000
         self.duration = duration
+        self.cname = "护盾"
 
     def deal(self):
         if self.duration == 0:
@@ -83,6 +90,9 @@ class Sheild(State):
     def narration(self):
         return f"{self.damage}-{self.name}"
     
+    def getCsubname(self):
+        return f"{self.damage}×{self.duration+1}"
+
     def save(self, damage):
         self.damage -= damage
 
@@ -92,6 +102,7 @@ class Invincible(State):
         self.name = "Invincible"
         self.priority = 3000
         self.duration = duration
+        self.cname = "无敌"
 
     def deal(self):
         if self.duration == 0:
@@ -101,6 +112,9 @@ class Invincible(State):
 
     def narration(self):
         return f"{self.duration}-{self.name}"
+
+    def getCsubname(self):
+        return f"×{self.duration+1}"
     
 class Unselectable(State):
     def __init__(self, duration, *args):
@@ -108,6 +122,7 @@ class Unselectable(State):
         self.name = "Unselectable"
         self.priority = 3000
         self.duration = duration
+        self.cname = "无影"
 
     def deal(self):
         if self.duration == 0:
@@ -118,12 +133,16 @@ class Unselectable(State):
     def narration(self):
         return f"{self.duration}-{self.name}"
 
+    def getCsubname(self):
+        return f"×{self.duration+1}"
+
 class Dizziness(State):
     def __init__(self, duration, *args):
         super().__init__(*args)
         self.name = "Dizziness"
         self.priority = 3000
         self.duration = duration
+        self.cname = "眩晕"
 
     def deal(self):
         if self.duration == 0:
@@ -138,6 +157,9 @@ class Dizziness(State):
 
     def narration(self):
         return f"{self.duration}-{self.name}"
+
+    def getCsubname(self):
+        return f"×{self.duration+1}"
     
 class Immobility(State):
     def __init__(self, duration, *args):
@@ -145,6 +167,7 @@ class Immobility(State):
         self.name = "Immobility"
         self.priority = 3000
         self.duration = duration
+        self.cname = "定身"
 
     def deal(self):
         if self.duration == 0:
@@ -159,3 +182,6 @@ class Immobility(State):
 
     def narration(self):
         return f"{self.duration}-{self.name}"
+    
+    def getCsubname(self):
+        return f"×{self.duration+1}"

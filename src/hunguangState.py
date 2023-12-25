@@ -8,6 +8,7 @@ class HunGuangRealDamagePassitive(state.State):
         super().__init__(*args)
         self.priority = 3000
         self.name = "realDamagePasitive"
+        self.cname = "破巧"
 
     def deal(self):
         self.owner.nextTurnStates.append(self)
@@ -20,6 +21,7 @@ class HunGuangFreeQPassitive(state.State):
         super().__init__(*args)
         self.priority = 3000
         self.name = "freeQPasitive"
+        self.cname = "力破"
 
     def deal(self):
         self.owner.nextTurnStates.append(self)
@@ -34,6 +36,7 @@ class HunGuangHoistSword(state.State):
         self.name = "hoistSword"
         self.duration = 2
         self.sheild = state_util.Sheild(1, 2)
+        self.cname = "举剑"
         owner.getState(self.sheild)
 
     def remove(self):
@@ -59,6 +62,7 @@ class HunGuangHeChen(state.State):
         super().__init__(*args)
         self.priority = 3000
         self.name = "heChen"
+        self.cname = "和尘"
 
     def deal(self):
         for skillAffect in self.owner.property.skillAffects:
@@ -85,6 +89,7 @@ class HunGuangSweepSword(state.State):
         self.priority = 1500
         self.name = "sweepSword"
         self.endurance = endurance
+        self.cname = "横扫"
 
     def deal(self):
         if self.owner.property.expectedDamage > 0:
@@ -103,6 +108,7 @@ class HunGuangOnSky(state.State):
         self.duration = 2
         self.invincible = state_util.Invincible(duration = 2)
         owner.getState(self.invincible)
+        self.cname = "天兵"
 
     def remove(self):
         super().remove()
@@ -117,6 +123,9 @@ class HunGuangOnSky(state.State):
         self.duration -= 1 
         self.owner.nextTurnStates.append(self)
     
+    def getCsubname(self):
+        return f"×{self.duration + 1}"
+
     def ownerCanCastSkill(self, skill):
         if skill.name not in ("R-2", "End"):
             return False

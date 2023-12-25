@@ -31,7 +31,7 @@ class GameGround:
         self.newLog()
         for champion in self.champions:
             champion.beforeTurn()
-
+            
     def midTurn(self):
         for champion in self.champions:
             champion.midTurn(log = self.motionLog)

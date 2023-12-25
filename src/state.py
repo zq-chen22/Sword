@@ -9,9 +9,15 @@ class State:
         self.name = name
         self.priority = priority
         self.property = StateProperty()
+        self.cname = "状态"
+        self.csubname = None
+        self.visiable = True
     
     def setOwner(self, owner):
         self.owner = owner
+
+    def getCsubname(self):
+        return self.csubname
 
     def deal(self):
         '''The real consequece of a state.'''

@@ -76,6 +76,7 @@ class JianZong(Champion):
         self.isMovable = False
         self.hasSword = True
         self.swordPosition = self.position
+        self.ctitle = "剑宗"
 
     def getSkills(self):
         self.getSkill(JianZongAttack())

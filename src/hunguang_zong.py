@@ -1,6 +1,9 @@
 
 import zong 
 from hunguangSkill import *
+from settings import *
+import util
+import pygame
 
 class HunGuang(zong.JianZong):
     def __init__(self):
@@ -8,6 +11,7 @@ class HunGuang(zong.JianZong):
         self.health = 5
         self.maxHealth = 5
         self.title = "HunGuangZong"
+        self.ctitle = "浑光宗"
 
     def getSkills(self):
         self.getSkill(HunGuangAttack())
@@ -48,5 +52,37 @@ class HunGuang(zong.JianZong):
         nar += f". Now he has {self.skills[5].layer} stack(s) of Q"
         return nar
 
+    def showStates(self, pos):
+        WIN = pygame.display.get_surface()
+        if self.showPosition == "Left":
+            font1 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 35)
+            font2 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 25)
+            title = font1.render(self.ctitle, True, BLACK)
+            state_pos = pos
+            state_title = font1.render("体力", True, BLACK)
+            WIN.blit(state_title, state_pos) 
+            state_subtitle = font2.render(f"×{self.endurance}", True, BLACK)
+            WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
+            state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
+            if self.hasSword:
+                state_title = font1.render("持剑", True, BLACK)
+                WIN.blit(state_title, state_pos) 
+                # state_subtitle = font2.render(f"×{self.endurance}", True, BLACK)
+                # WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
+                state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
+            else:
+                state_title = font1.render("无剑", True, BLACK)
+                WIN.blit(state_title, state_pos) 
+                state_subtitle = font2.render(f" {self.swordPosition.cname}", True, BLACK)
+                WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
+                state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
+            for state in self.states:
+                if state.visiable:
+                    state_title = font1.render(state.cname, True, BLACK)
+                    WIN.blit(state_title, state_pos) 
+                    if state.getCsubname() is not None:
+                        state_subtitle = font2.render(state.getCsubname(), True, BLACK)
+                        WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
+                    state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
 
     
