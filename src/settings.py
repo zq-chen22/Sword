@@ -19,6 +19,9 @@ GRAY = '#999999'
 INK = '#C0C0C0'
 CRIMSON = "#DC143C"
 FIREBRICK = "#B22222"
+MIDNIGHTBLUE = "#16264C"
+DEEPBLUE = "#004C99"
+SHALLOWBLUE = "#6D89DF"
 
 PATH = os.path.dirname(os.path.dirname(__file__))
 MODE = "window"  # "window"/"terminal"/"none"

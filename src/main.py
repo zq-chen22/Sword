@@ -24,11 +24,12 @@ from hunguang_zong import HunGuang
 class Qian(Place):
     def __init__(self):
         super().__init__()
-        self.screenPos = (0.5 * WIDTH - 330, 180)
+        self.screenPos = (0.5 * WIDTH - 350, 180)
         self.setName("qian")
         self.cname = "乾"
 
     def showAt(self, pos):
+        pos = (pos[0]+20, pos[1])
         super().showAt()
         WIN = pygame.display.get_surface()
         font = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 40)
@@ -53,11 +54,12 @@ class Qian(Place):
 class Kun(Place):
     def __init__(self):
         super().__init__()
-        self.screenPos = (0.5 * WIDTH + 235, 190)
+        self.screenPos = (0.5 * WIDTH + 200, 190)
         self.setName("kun")
         self.cname = "坤"
 
     def showAt(self, pos):
+        pos = (pos[0]+35, pos[1])
         super().showAt()
         WIN = pygame.display.get_surface()
         font = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 40)
@@ -89,7 +91,13 @@ class Game:
         solder1 = HunGuang()
         solder2 = HunGuang()
         solder1.setName("DB.Lofen")
+        solder1.cname = "子虚"
+        solder1.showPosition = "Left"
+        solder1.color = "Red"
         solder2.setName("DB.Lemon")
+        solder2.cname = "乌有"
+        solder2.showPosition = "Right"
+        solder2.color = "Blue"
         place1.setChampion(solder1)
         place1.setChampion(solder2)
         self.window.insertPlace(place1)

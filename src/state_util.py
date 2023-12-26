@@ -91,7 +91,7 @@ class Sheild(State):
         return f"{self.damage}-{self.name}"
     
     def getCsubname(self):
-        return f"{self.damage}×{self.duration+1}"
+        return f"×{self.damage}"
 
     def save(self, damage):
         self.damage -= damage

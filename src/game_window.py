@@ -11,7 +11,7 @@ class GameWindow(GameGround):
 		super().__init__()
 		pygame.init()
 		self.window = pygame.display.set_mode((WIDTH,HEIGHT), pygame.RESIZABLE)
-		pygame.display.set_caption('Sword')
+		pygame.display.set_caption('华山论剑2.5.2')
 
 		self.clock = pygame.time.Clock()
 		self.titleFont = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 70)
@@ -39,6 +39,7 @@ class GameWindow(GameGround):
 		self.midTurn()
 		self.afterTurn()
 
+	
 	def update(self):
 		self.window.fill(WATER_COLOR)
 		self.window.blit(self.BG, (0, 0))
@@ -46,14 +47,18 @@ class GameWindow(GameGround):
 		line = self.titleFont.render("华山论剑第{}回".format(cn2an.an2cn(self.turn, "up")), True, pygame.Color(0, 0, 0, a = 0.7))
 		self.window.blit(line, (0.5 * WIDTH - 0.5 * line.get_width() - 50, 20 ))
 		patch = self.smallFont.render("版本号 2 - 5 - 2", True, pygame.Color(0, 0, 0, a = 0.7))
-		self.window.blit(patch, (0.5 * WIDTH + 0.45 * line.get_width() -50 , line.get_rect().y + line.get_height() + 5))
+		self.window.blit(patch, (min(0.5 * WIDTH + 0.45 * line.get_width() -50, WIDTH - 200 - patch.get_width()) , line.get_rect().y + line.get_height() + 5))
 		for place in self.places:
 			place.showAt(place.screenPos)
 		# for i in range(int(len(self.narration())/40)):
 		# 	line = self.font.render(self.narration()[40 * i: min(40 * i + 40, len(self.narration()) - 1)], True, pygame.Color(0, 0, 0, a = 0.7))
 		# 	self.window.blit(line, (50, 50 * ( i + 3 )))
-		self.champions[0].showSkills()
+		self.champions[1].showSkills()
 		self.champions[0].showBar()
+		self.champions[1].showBar()
+		self.champions[0].showPlace()
+		self.champions[1].showPlace()
+
 
 	def reportLog(self):
 		pass
@@ -63,10 +68,4 @@ class GameWindow(GameGround):
 		for i in range(5 * FPS):
 			if util.getPygameKey() != '':
 				break
-			self.clock.tick(FPS)
-
-
-
-
-
-		
+			self.clock.tick(FPS)	

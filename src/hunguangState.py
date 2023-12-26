@@ -21,7 +21,7 @@ class HunGuangFreeQPassitive(state.State):
         super().__init__(*args)
         self.priority = 3000
         self.name = "freeQPasitive"
-        self.cname = "力破"
+        self.cname = "余势"
 
     def deal(self):
         self.owner.nextTurnStates.append(self)

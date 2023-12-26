@@ -44,10 +44,12 @@ class Champion:
         self.nextTurnStates = []
         self.property = InTurnProperty()
         self.propertyHistory = []
-        self.showPosition = "Left"
         self.state = "beforeTurn"
+        self.showPosition = None
         self.ctitle = "无宗门"
-        self.cname = "子虚"
+        self.cname = None
+        self.color = None
+        self.screenPos =  None
         # self.window = WindowProperty()
 
     def narration(self):
@@ -58,6 +60,7 @@ class Champion:
 
     def setPosition(self, position):
         self.position = position
+        self.updateScreenPos()
 
     def setName(self, name):
         self.name = name
@@ -199,6 +202,25 @@ class Champion:
             return self.chooseSkillFunc()
         self.token.append(instruction)
         return self.chooseSkillToken()
+    
+    def chooseSkillKey(self):
+        instruction = ""
+        while True:
+            instruction = util.getPygameKey()
+            if len(instruction) > 0:
+                break
+        button = instruction[0]
+        for skill in self.castableSkills():
+            if button.isalpha():
+                if button in (skill.button.upper(), skill.button.lower()):
+                    self.token += button
+                    self.tokenIndex += 1
+                    return skill
+            elif button == skill.button:
+                self.token += button
+                self.tokenIndex += 1
+                return skill
+        return self.chooseSkillKey()
         
     def hasState(self, stateName):
         for state in self.states:
@@ -214,16 +236,19 @@ class Champion:
                 buttonDict[skill.button].append(skill)
             else:
                 buttonDict[skill.button] = [skill]
-        if self.showPosition == "Left":
-            skillPos = [0.5 * (WIDTH - 70 * len(buttonDict.keys())) + 50 , HEIGHT - 250]
+        skillPos = [0.5 * (WIDTH - 70 * len(buttonDict.keys())) + 50 , HEIGHT - 250]
         
         pos = (skillPos[0]-70, skillPos[1])
         WIN = pygame.display.get_surface()
         lines = []
         font = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 50)
         charFont = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 70)
-        color = MAROON
-        buttonColor = SALMON
+        if self.color == "Red":
+            color = MAROON
+            buttonColor = SALMON
+        if self.color == "Blue":
+            color = MIDNIGHTBLUE
+            buttonColor = SHALLOWBLUE
         if self.state == "beforeTurn":
             title = "初"
         elif self.state == "midTurn":
@@ -254,32 +279,58 @@ class Champion:
                     break
             if not isActive:
                 buttonDict[k][0].showAt(skillPos)
-            if self.showPosition == "Left":
-                skillPos[0] += int((len(skill.showTitle)-1)/4) * 50 + 70
+            skillPos[0] += int((len(skill.showTitle)-1)/4) * 50 + 70
 
     
     def showStates(self, pos):
         WIN = pygame.display.get_surface()
-        if self.showPosition == "Left":
-            font1 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 35)
-            font2 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 25)
-            title = font1.render(self.ctitle, True, BLACK)
-            state_pos = pos
-            for state in self.states:
-                if state.visiable:
-                    state_title = font1.render(state.cname, True, BLACK)
+        font1 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 35)
+        font2 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 25)
+        state_pos = pos
+        for state in self.states:
+            if state.visiable:
+                state_title = font1.render(state.cname, True, BLACK)
+                if self.showPosition == "Left":
                     WIN.blit(state_title, state_pos) 
-                    if state.getCsubname() is not None:
-                        state_subtitle = font2.render(state.getCsubname(), True, BLACK)
+                if self.showPosition == "Right":
+                    WIN.blit(state_title, np.array((WIDTH - state_title.get_width(), 0)) - np.array((1, -1)) * state_pos) 
+                if state.getCsubname() is not None:
+                    state_subtitle = font2.render(state.getCsubname(), True, BLACK)
+                    if self.showPosition == "Left":
                         WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
-                    state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
+                    if self.showPosition == "Right":
+                        WIN.blit(state_subtitle, np.array((WIDTH - state_subtitle.get_width(), 0)) - np.array((1, -1)) * np.array((state_pos[0] - 20, state_pos[1] + state_title.get_height() - 20)))
+                state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
+
+    def showPlace(self):
+        WIN = pygame.display.get_surface()
+        if self.color == "Blue":
+            color = util.hex_to_bgr(DEEPBLUE)
+        if self.color == "Red":
+            color = util.hex_to_bgr(FIREBRICK)
+        img = cv2.imread(os.path.join(PATH, "graphics", "property", "cross.jpg"))
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+        new_img = img.copy()
+        # print(np.max(np.linalg.norm(img[:, :, :]/255, axis = 2)))
+        new_img[:, :, 3] = 255 * np.linalg.norm(1 - img[:, :, :]/255, axis = 2)/np.max(np.linalg.norm(1 - img[:, :, :]/255, axis = 2))
+        new_img[np.linalg.norm(img[:, :, :]/255, axis = 2) ** 2 > 2.8, 3] = 0
+        new_img[:, :, :3] = np.array(color)
+        cross = pygame.image.frombuffer(new_img.tostring(), new_img.shape[1::-1], "BGRA")
+        cross = pygame.transform.scale(cross, (120, 120 * cross.get_height() / cross.get_width()))
+        WIN.blit(cross, self.screenPos)
+
+    def updateScreenPos(self):
+        self.screenPos = np.array(self.position.screenPos) + 100 * np.random.random((2,))
 
     def showHealth(self, pos):
         WIN = pygame.display.get_surface()
         dot_pos = pos
         for i in range(self.maxHealth):
             if i < self.health:
-                color = util.hex_to_bgr(FIREBRICK)
+                if self.color == "Blue":
+                    color = util.hex_to_bgr(DEEPBLUE)
+                if self.color == "Red":
+                    color = util.hex_to_bgr(FIREBRICK)
             else:
                 color = util.hex_to_bgr(GRAY)
             img = cv2.imread(os.path.join(PATH, "graphics", "property", "dot.jpg"))
@@ -292,25 +343,35 @@ class Champion:
             #             img[i, j, k] = int(255 - (1 - img[i, j, k]/255) * (255 - color[2-k]))
             img[:, :, :3] = np.floor(255 - (1-img[:, :, :3]/255) * (255 - np.array(color)))
             health_sample = pygame.image.frombuffer(img.tostring(), img.shape[1::-1], "BGRA")
-            health_sample = pygame.transform.scale(health_sample, (50, 50 * health_sample.get_height() / health_sample.get_width()))
-            WIN.blit(health_sample, dot_pos)
-            dot_pos = (dot_pos[0], dot_pos[1] + health_sample.get_height())
+            health_sample = pygame.transform.scale(health_sample, (40, 40 * health_sample.get_height() / health_sample.get_width()))
+            if self.showPosition == "Left":
+                WIN.blit(health_sample, dot_pos)
+            if self.showPosition == "Right":
+                WIN.blit(health_sample, np.array((WIDTH - health_sample.get_width(), 0)) - np.array((1, -1)) * dot_pos)
+            dot_pos = (dot_pos[0], dot_pos[1] + health_sample.get_height() + 10)
 
     def showBar(self):
         WIN = pygame.display.get_surface()
-        if self.showPosition == "Left":
-            pos = (50, 100)
-            font1 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 40)
-            font2 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 50)
+        font1 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 40)
+        font2 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 50)
+        if self.color == "Red":
             color = MAROON
-            title = font1.render(self.ctitle, True, BLACK)
-            title_pos = pos
-            name = font2.render(self.cname, True, color)
-            name_pos = (pos[0] + title.get_height(), pos[1] + title.get_height())
-            self.showHealth((pos[0], pos[1] + 2 * title.get_height()))
-            self.showStates((pos[0] + 1.5 * title.get_height(), pos[1] + 2.5 * title.get_height()))
+        if self.color == "Blue":
+            color = MIDNIGHTBLUE
+        title = font1.render(self.ctitle, True, BLACK)
+        pos = np.array((50, 100))
+        title_pos = pos
+        name = font2.render(self.cname, True, color)
+        name_pos = pos + title.get_height()
+        self.showHealth((pos[0], pos[1] + 2 * title.get_height()))
+        self.showStates((pos[0] + 1.5 * title.get_height(), pos[1] + 2.5 * title.get_height()))
+        if self.showPosition == "Left":
             WIN.blit(title, title_pos)
             WIN.blit(name, name_pos)
+        if self.showPosition == "Right":
+            WIN.blit(title, np.array((WIDTH - title.get_width(), 0)) - np.array((1, -1)) * title_pos)
+            WIN.blit(name, np.array((WIDTH - name.get_width(), 0)) - np.array((1, -1)) * name_pos)
+        
 
 
             

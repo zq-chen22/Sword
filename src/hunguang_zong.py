@@ -4,6 +4,7 @@ from hunguangSkill import *
 from settings import *
 import util
 import pygame
+import numpy as np
 
 class HunGuang(zong.JianZong):
     def __init__(self):
@@ -54,35 +55,49 @@ class HunGuang(zong.JianZong):
 
     def showStates(self, pos):
         WIN = pygame.display.get_surface()
+        font1 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 35)
+        font2 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 25)
+        state_pos = pos
+        state_title = font1.render("体力", True, BLACK)
         if self.showPosition == "Left":
-            font1 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 35)
-            font2 = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 25)
-            title = font1.render(self.ctitle, True, BLACK)
-            state_pos = pos
-            state_title = font1.render("体力", True, BLACK)
             WIN.blit(state_title, state_pos) 
-            state_subtitle = font2.render(f"×{self.endurance}", True, BLACK)
+        if self.showPosition == "Right":
+            WIN.blit(state_title, np.array((WIDTH - state_title.get_width(), 0)) - np.array((1, -1)) * state_pos) 
+        state_subtitle = font2.render(f"×{self.endurance}", True, BLACK)
+        if self.showPosition == "Left":
             WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
+        if self.showPosition == "Right":
+            WIN.blit(state_subtitle, np.array((WIDTH - state_subtitle.get_width(), 0)) - np.array((1, -1)) * np.array((state_pos[0] - 20, state_pos[1] + state_title.get_height() - 20)))
+        state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
+        if self.hasSword:
+            state_title = font1.render("持剑", True, BLACK)
+            if self.showPosition == "Left":
+                WIN.blit(state_title, state_pos) 
+            if self.showPosition == "Right":
+                WIN.blit(state_title, np.array((WIDTH - state_title.get_width(), 0)) - np.array((1, -1)) * state_pos)
+            # state_subtitle = font2.render(f"×{self.endurance}", True, BLACK)
+            # WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
             state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
-            if self.hasSword:
-                state_title = font1.render("持剑", True, BLACK)
+        else:
+            state_title = font1.render("无剑", True, BLACK)
+            if self.showPosition == "Left":
                 WIN.blit(state_title, state_pos) 
-                # state_subtitle = font2.render(f"×{self.endurance}", True, BLACK)
-                # WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
-                state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
-            else:
-                state_title = font1.render("无剑", True, BLACK)
-                WIN.blit(state_title, state_pos) 
-                state_subtitle = font2.render(f" {self.swordPosition.cname}", True, BLACK)
+            if self.showPosition == "Right":
+                WIN.blit(state_title, np.array((WIDTH - state_title.get_width(), 0)) - np.array((1, -1)) * state_pos)
+            state_subtitle = font2.render(f" {self.swordPosition.cname}", True, BLACK)
+            if self.showPosition == "Left":
                 WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
-                state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
-            for state in self.states:
-                if state.visiable:
-                    state_title = font1.render(state.cname, True, BLACK)
-                    WIN.blit(state_title, state_pos) 
-                    if state.getCsubname() is not None:
-                        state_subtitle = font2.render(state.getCsubname(), True, BLACK)
-                        WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
-                    state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
+            if self.showPosition == "Right":
+                WIN.blit(state_subtitle, np.array((WIDTH - state_subtitle.get_width(), 0)) - np.array((1, -1)) * np.array((state_pos[0] - 20, state_pos[1] + state_title.get_height() - 20)))
+            state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
+        super().showStates(state_pos)
+            # for state in self.states:
+            #     if state.visiable:
+            #         state_title = font1.render(state.cname, True, BLACK)
+            #         WIN.blit(state_title, state_pos) 
+            #         if state.getCsubname() is not None:
+            #             state_subtitle = font2.render(state.getCsubname(), True, BLACK)
+            #             WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
+            #         state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
 
     

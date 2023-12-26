@@ -65,8 +65,12 @@ class Skill:
         font = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 50)
         charFont = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 70)
         if self.isCastable():
-            color = MAROON
-            buttonColor = SALMON
+            if self.owner.color == "Red":
+                color = MAROON
+                buttonColor = SALMON
+            if self.owner.color == "Blue":
+                color = MIDNIGHTBLUE
+                buttonColor = SHALLOWBLUE
         else:
             color = IRON
             buttonColor = GRAY
