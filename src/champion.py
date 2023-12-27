@@ -14,14 +14,14 @@ class InTurnProperty:
         self.skillAffects = []
         self.expectedDamage = 0
 
-# class WindowProperty:
-#     def __init__(self):
-#         self.
-
 class Champion:
 
     championId = 0
 
+    healthImg = cv2.imread(os.path.join(PATH, "graphics", "property", "dot.jpg"))
+    healthImg = cv2.cvtColor(healthImg, cv2.COLOR_BGR2BGRA)
+    healthImg[np.linalg.norm(healthImg[:, :, :]/255, axis = 2) ** 2 > 2.8, 3] = 0
+    
     def __init__(self):
         Champion.championId += 1
         self.position = None
@@ -50,6 +50,10 @@ class Champion:
         self.cname = None
         self.color = None
         self.screenPos =  None
+        self.window = None
+        self.healthSample = None
+        self.emptyHealthSample = None
+        self.figureImg = None
         # self.window = WindowProperty()
 
     def narration(self):
@@ -113,9 +117,6 @@ class Champion:
         self.propertyHistory.append(self.property)
         self.property = InTurnProperty()
 
-    def midTurn(self, **kwarg):
-        self.state = "midTurn"
-
     def afterTurn(self, **kwarg):
         self.state = "afterTurn"
         self.settleAllState(**kwarg)
@@ -143,9 +144,12 @@ class Champion:
             self.chooseSkillFunc = self.chooseSkillMix
             if 'token' in kwarg.keys():
                 self.token = kwarg['token']
+        if policy == "key":
+            self.chooseSkillFunc = self.chooseSkillKey
 
 
     def midTurn(self, **kwarg):
+        self.state = "midTurn"
         if "log" in kwarg.keys():
             kwarg["log"][-1] += f"{self.title} {self.name} chooses to take the following moves.\n"
         while self.castableSkills() != []:
@@ -204,6 +208,9 @@ class Champion:
         return self.chooseSkillToken()
     
     def chooseSkillKey(self):
+        self.window.update()
+        self.showSkills()
+        pygame.display.update()
         instruction = ""
         while True:
             instruction = util.getPygameKey()
@@ -302,8 +309,7 @@ class Champion:
                         WIN.blit(state_subtitle, np.array((WIDTH - state_subtitle.get_width(), 0)) - np.array((1, -1)) * np.array((state_pos[0] - 20, state_pos[1] + state_title.get_height() - 20)))
                 state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
 
-    def showPlace(self):
-        WIN = pygame.display.get_surface()
+    def figureImgInit(self):
         if self.color == "Blue":
             color = util.hex_to_bgr(DEEPBLUE)
         if self.color == "Red":
@@ -311,39 +317,50 @@ class Champion:
         img = cv2.imread(os.path.join(PATH, "graphics", "property", "cross.jpg"))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
         new_img = img.copy()
-        # print(np.max(np.linalg.norm(img[:, :, :]/255, axis = 2)))
         new_img[:, :, 3] = 255 * np.linalg.norm(1 - img[:, :, :]/255, axis = 2)/np.max(np.linalg.norm(1 - img[:, :, :]/255, axis = 2))
         new_img[np.linalg.norm(img[:, :, :]/255, axis = 2) ** 2 > 2.8, 3] = 0
         new_img[:, :, :3] = np.array(color)
         cross = pygame.image.frombuffer(new_img.tostring(), new_img.shape[1::-1], "BGRA")
-        cross = pygame.transform.scale(cross, (120, 120 * cross.get_height() / cross.get_width()))
-        WIN.blit(cross, self.screenPos)
+        self.figureImg = pygame.transform.scale(cross, (120, 120 * cross.get_height() / cross.get_width()))
+
+    def showPlace(self):
+        WIN = pygame.display.get_surface()
+        if self.figureImg is None:
+            self.figureImgInit()
+        WIN.blit(self.figureImg, self.screenPos)
 
     def updateScreenPos(self):
         self.screenPos = np.array(self.position.screenPos) + 100 * np.random.random((2,))
+
+    def healthSampleInit(self):
+        if self.color == "Blue":
+            color = util.hex_to_bgr(DEEPBLUE)
+        if self.color == "Red":
+            color = util.hex_to_bgr(FIREBRICK)
+        healthImg = self.healthImg.copy()
+        healthImg[:, :, :3] = np.floor(255 - (1-self.healthImg[:, :, :3]/255) * (255 - np.array(color)))
+        health_sample = pygame.image.frombuffer(healthImg.tostring(), healthImg.shape[1::-1], "BGRA")
+        self.healthSample = pygame.transform.scale(health_sample, (40, 40 * health_sample.get_height() / health_sample.get_width()))
+
+    def emptyHealthSampleInit(self):
+        color = util.hex_to_bgr(GRAY)
+        healthImg = self.healthImg.copy()
+        healthImg[:, :, :3] = np.floor(255 - (1-self.healthImg[:, :, :3]/255) * (255 - np.array(color)))
+        health_sample = pygame.image.frombuffer(healthImg.tostring(), healthImg.shape[1::-1], "BGRA")
+        self.emptyHealthSample = pygame.transform.scale(health_sample, (40, 40 * health_sample.get_height() / health_sample.get_width()))
 
     def showHealth(self, pos):
         WIN = pygame.display.get_surface()
         dot_pos = pos
         for i in range(self.maxHealth):
             if i < self.health:
-                if self.color == "Blue":
-                    color = util.hex_to_bgr(DEEPBLUE)
-                if self.color == "Red":
-                    color = util.hex_to_bgr(FIREBRICK)
+                if self.healthSample is None:
+                    self.healthSampleInit()
+                health_sample = self.healthSample
             else:
-                color = util.hex_to_bgr(GRAY)
-            img = cv2.imread(os.path.join(PATH, "graphics", "property", "dot.jpg"))
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
-            # print(np.linalg.norm(img[:, :, :]/255, axis = 2) > 0.9)
-            img[np.linalg.norm(img[:, :, :]/255, axis = 2) ** 2 > 2.8, 3] = 0
-            # for i in range(img.shape[0]):
-            #     for j in range(img.shape[1]):
-            #         for k in range(3):
-            #             img[i, j, k] = int(255 - (1 - img[i, j, k]/255) * (255 - color[2-k]))
-            img[:, :, :3] = np.floor(255 - (1-img[:, :, :3]/255) * (255 - np.array(color)))
-            health_sample = pygame.image.frombuffer(img.tostring(), img.shape[1::-1], "BGRA")
-            health_sample = pygame.transform.scale(health_sample, (40, 40 * health_sample.get_height() / health_sample.get_width()))
+                if self.emptyHealthSample is None:
+                    self.emptyHealthSampleInit()
+                health_sample = self.emptyHealthSample
             if self.showPosition == "Left":
                 WIN.blit(health_sample, dot_pos)
             if self.showPosition == "Right":
@@ -371,10 +388,7 @@ class Champion:
         if self.showPosition == "Right":
             WIN.blit(title, np.array((WIDTH - title.get_width(), 0)) - np.array((1, -1)) * title_pos)
             WIN.blit(name, np.array((WIDTH - name.get_width(), 0)) - np.array((1, -1)) * name_pos)
-        
-
-
-            
+               
 if __name__ == "__main__":
     x = Champion()
     y = Champion()

@@ -7,12 +7,15 @@ class GameGround:
 
     def insertPlace(self, place):
         self.places.append(place)
+        place.window = self
         for champion in place.champions:
             if champion not in self.champions:
                 self.champions.append(champion)
+                champion.window = self
     
     def insertChampion(self, champion):
         self.champions.append(champion)
+        champion.window = self
 
     def narration(self):
         narration = f"Now it is turn {self.turn}. There are {len(self.places)} places and {len(self.champions)} champions as following.\n"
@@ -20,7 +23,6 @@ class GameGround:
             narration += f"{ind + 1}. {champion.narration()}.\n"
         return narration
     
-
     def newLog(self):
         self.motionLog.append("")
 

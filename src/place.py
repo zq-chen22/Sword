@@ -12,6 +12,8 @@ class Place:
         self.nextTurnAffects = []
         self.screenPos = None
         self.cname = f"地点{Place.placeId}"
+        self.window = None
+        self.placeImg = None
     
     def setName(self, name):
         self.name = name
@@ -47,5 +49,8 @@ class Place:
 
     def __str__(self):
         return f"{self.index}.{self.name}"
+    
+    def placeImgInit(self):
+        pass
 
 

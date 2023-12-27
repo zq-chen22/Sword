@@ -34,12 +34,9 @@ class GameWindow(GameGround):
 	def runTurn(self):
 		self.turn += 1
 		self.beforeTurn()
-		self.update()
-		self.showScreen()
 		self.midTurn()
 		self.afterTurn()
 
-	
 	def update(self):
 		self.window.fill(WATER_COLOR)
 		self.window.blit(self.BG, (0, 0))
@@ -50,15 +47,9 @@ class GameWindow(GameGround):
 		self.window.blit(patch, (min(0.5 * WIDTH + 0.45 * line.get_width() -50, WIDTH - 200 - patch.get_width()) , line.get_rect().y + line.get_height() + 5))
 		for place in self.places:
 			place.showAt(place.screenPos)
-		# for i in range(int(len(self.narration())/40)):
-		# 	line = self.font.render(self.narration()[40 * i: min(40 * i + 40, len(self.narration()) - 1)], True, pygame.Color(0, 0, 0, a = 0.7))
-		# 	self.window.blit(line, (50, 50 * ( i + 3 )))
-		self.champions[1].showSkills()
-		self.champions[0].showBar()
-		self.champions[1].showBar()
-		self.champions[0].showPlace()
-		self.champions[1].showPlace()
-
+		for champion in self.champions:
+			champion.showBar()
+			champion.showPlace()
 
 	def reportLog(self):
 		pass

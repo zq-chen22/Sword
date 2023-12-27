@@ -4,9 +4,10 @@ def bondingPlaces(places):
             if placeI not in placeJ.neighbors:
                 placeJ.neighbors.append(placeI)
 
-import pygame
+
 
 def getPygameKey():
+    import pygame
     keys = ""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

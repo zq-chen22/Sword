@@ -1,6 +1,7 @@
 import random
 import pygame
 from settings import *
+import util
 
 class SkillShoot():
     def __init__(self, skill, **kwargs):
@@ -140,6 +141,20 @@ class TargetSkill(Skill):
             return self.getTarget()
         self.owner.token.append(instruction)
         return self.getTokenTarget()
+    
+    def getKeyTarget(self):
+        instruction = ""
+        while True:
+            instruction = util.getPygameKey()
+            if len(instruction) > 0:
+                break
+        button = instruction[0]
+        for skill in self.allTargets():
+            if button == skill.button:
+                self.token += button
+                self.tokenIndex += 1
+                return skill
+        return self.getKeyTarget()
 
     def switchPolicy(self, policy):
         if policy == "random":
@@ -150,8 +165,8 @@ class TargetSkill(Skill):
             self.getTarget = self.getTokenTarget
         if policy == "mix":
             self.getTarget = self.getMixTarget
-
-
+        if policy == "key":
+            self.getTarget = self.getKeyTarget
 
     def narration(self):
         nar = self.name
