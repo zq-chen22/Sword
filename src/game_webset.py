@@ -1,4 +1,4 @@
-from game_ground import GameGround
+from game_window import GameWindow
 from settings import *
 import pygame
 import util 
@@ -6,7 +6,7 @@ import cn2an
 import cv2
 import numpy as np
 
-class GameWindow(GameGround):
+class GameWebset(GameWindow):
 	def __init__(self):
 		super().__init__()
 		pygame.init()

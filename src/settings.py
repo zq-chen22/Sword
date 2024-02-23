@@ -24,6 +24,10 @@ DEEPBLUE = "#004C99"
 SHALLOWBLUE = "#6D89DF"
 
 PATH = os.path.dirname(os.path.dirname(__file__))
-MODE = "window"  # "window"/"terminal"/"none"
+MODE = "webset"  # "webset"/"window"/"terminal"/"none"
 PLAYERS = 2
 PLAYERPOLICY = ["input", "random"]
+
+LOCAL_IP = "127.0.0.1"
+GLOBAL_IP = "127.0.0.1"
+PORT = 7071

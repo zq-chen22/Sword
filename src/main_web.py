@@ -1,5 +1,5 @@
 from settings import *
-from game_window import GameWindow
+from game_webset import GameWebset
 from state_util import *
 from affect_util import *
 import util
@@ -15,9 +15,9 @@ import copy
 
 # exit()
 
-class Game:
+class GameWeb:
     def __init__(self):
-        self.window = GameWindow()
+        self.window = GameWebset()
         place1 = Qian()
         place2 = Kun()
         util.bondingPlaces((place1, place2))
@@ -26,6 +26,7 @@ class Game:
         solder1.setName("DB.Lofen")
         solder1.cname = "子虚"
         solder1.showPosition = "Left"
+        solder1.webID = 0
         solder1.color = "Red"
         solder2.setName("DB.Lemon")
         solder2.cname = "乌有"
@@ -35,11 +36,8 @@ class Game:
         place2.setChampion(solder2)
         self.window.insertPlace(place1)
         self.window.insertPlace(place2)
-        # general setup
-
         solder1.setPolicy("key")
-        solder2.setPolicy("key")
-        # sound 
+        solder2.setPolicy("token", token = "")
         
     
     def run(self):
@@ -47,5 +45,5 @@ class Game:
             self.window.runTurn()
 
 if __name__ == '__main__':
-    game = Game()
+    game = GameWeb()
     game.run()
