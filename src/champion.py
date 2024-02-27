@@ -33,6 +33,7 @@ class Champion:
         self.policy = None
         self.maxHealth = None
         self.hasUtimate = True
+        self.faBao = 1
         self.title = "DefaultChampion"
         if self.name is None:
             self.name = f"champion{Champion.championId}"

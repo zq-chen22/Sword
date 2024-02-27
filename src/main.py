@@ -38,7 +38,7 @@ class Game:
         # general setup
 
         solder1.setPolicy("key")
-        solder2.setPolicy("key")
+        solder2.setPolicy("random")
         # sound 
         
     

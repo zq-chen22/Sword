@@ -25,6 +25,7 @@ class HunGuang(zong.JianZong):
         self.getSkill(HunGuangE())
         self.getSkill(HunGuangR1())
         self.getSkill(HunGuangR2())
+        self.getSkill(HunGuangShunQian())
         self.getSkill(skill.GiveUp())
 
     def refresh(self):

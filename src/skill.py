@@ -4,7 +4,7 @@ from settings import *
 import util
 import numpy as np
 
-class SkillShoot():
+class SkillShoot:
     def __init__(self, skill, **kwargs):
         self.skill = skill
         self.kwargs = kwargs

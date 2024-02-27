@@ -24,7 +24,7 @@ DEEPBLUE = "#004C99"
 SHALLOWBLUE = "#6D89DF"
 
 PATH = os.path.dirname(os.path.dirname(__file__))
-MODE = "webset"  # "webset"/"window"/"terminal"/"none"
+MODE = "window"  # "webset"/"window"/"terminal"/"none"
 PLAYERS = 2
 PLAYERPOLICY = ["input", "random"]
 
