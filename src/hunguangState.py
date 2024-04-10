@@ -131,7 +131,7 @@ class HunGuangOnSky(state.State):
         return f"×{self.duration + 1}"
 
     def ownerCanCastSkill(self, skill):
-        if skill.name not in ("R-2", "End"):
+        if skill.name not in ("R-2", "End", "F"):
             return False
         return True
 

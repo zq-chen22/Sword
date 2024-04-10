@@ -263,7 +263,7 @@ class HunGuangShunQian(skill.TargetSkill):
         super().__init__()
         self.setName("F")
         self.setButton("F")
-        self.addLabels("faBao")
+        self.addLabels("faBao", "move")
         self.getTarget = self.getRandomTarget
         self.showTitle = "瞬迁"
 
