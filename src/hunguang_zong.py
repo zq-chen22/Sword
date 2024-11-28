@@ -101,5 +101,19 @@ class HunGuang(zong.JianZong):
             #             state_subtitle = font2.render(state.getCsubname(), True, BLACK)
             #             WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
             #         state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
-
+    
+    def chooseSkillSoloAI(self):
+        # Q start
+        # W/move/set a new Q
+        castableSkillsButtons = {skill.button: 1 for skill in self.castableSkills()}
+        if self.endurance == 0:
+            button = "S"
+            for skill in self.castableSkills():
+                if button.isalpha():
+                    if button in (skill.button.upper(), skill.button.lower()):
+                        self.token += skill.button
+                        self.tokenIndex += 1
+                        return skill
+        self.position.index == self.enemy.position.index
+        exit()
     

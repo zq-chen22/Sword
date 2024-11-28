@@ -110,13 +110,13 @@ class HunGuangOnSky(state.State):
         self.name = "onSky"
         self.poisoners = poisoners
         self.duration = 2
-        self.invincible = state_util.Invincible(duration = 2)
-        owner.getState(self.invincible)
+        self.unselectable = state_util.Unselectable(duration = 2)
+        owner.getState(self.unselectable)
         self.cname = "天兵"
 
     def remove(self):
         super().remove()
-        self.invincible.remove()
+        self.unselectable.remove()
 
     def deal(self):
         for poisoner in self.poisoners:

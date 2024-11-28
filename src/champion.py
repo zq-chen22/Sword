@@ -26,6 +26,7 @@ class Champion:
     def __init__(self):
         Champion.championId += 1
         self.position = None
+        self.positionLastFrame = None
         self.health = None
         self.skills = []
         self.states = []
@@ -118,6 +119,7 @@ class Champion:
     def beforeTurn(self, **kwarg):
         self.state = "beforeTurn"
         self.propertyHistory.append(self.property)
+        self.positionLastFrame = self.position
         self.property = InTurnProperty()
 
     def afterTurn(self, **kwarg):
@@ -149,6 +151,8 @@ class Champion:
                 self.token = kwarg['token']
         if policy == "key":
             self.chooseSkillFunc = self.chooseSkillKey
+        if policy == "soloAI":
+            self.chooseSkillFunc = self.chooseSkillSoloAI
 
 
     def midTurn(self, **kwarg):
@@ -179,8 +183,6 @@ class Champion:
         if MODE == "webset" and not self.policy == "token":
             print("upload data..")
             client.upload(str(self.webID) + "&" + self.token[tokenIndex:self.tokenIndex])
-
-            
 
     def chooseSkillRandom(self):
         skill = random.choice(self.castableSkills())
@@ -242,12 +244,18 @@ class Champion:
                 self.tokenIndex += 1
                 return skill
         return self.chooseSkillKey()
+    
+    def chooseSkillSoloAI(self):
+        return self.chooseSkillRandom()
         
     def hasState(self, stateName):
         for state in self.states:
             if state.name == stateName:
                 return True
         return False
+    
+    def getEnemy(self, champ):
+        self.enemy = champ
 
     # window display attributes
     def showSkills(self):

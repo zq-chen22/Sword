@@ -115,7 +115,7 @@ class Invincible(State):
 
     def getCsubname(self):
         return f"×{self.duration+1}"
-    
+
 class Unselectable(State):
     def __init__(self, duration, *args):
         super().__init__(*args)

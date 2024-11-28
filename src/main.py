@@ -37,8 +37,10 @@ class Game:
         self.window.insertPlace(place2)
         # general setup
 
-        solder1.setPolicy("key")
-        solder2.setPolicy("key")
+        solder1.setPolicy("random")
+        solder2.setPolicy("random")
+        # solder2.setPolicy("soloAI")
+        # solder2.getEnemy(solder1)
         # sound 
         
     

@@ -4,6 +4,7 @@ from hunguangState import *
 import affect
 import affect_util
 from hunguangAffect import *
+import random
 
 class HunGuangAttack(skill.TargetSkill):
     def __init__(self):
@@ -39,6 +40,14 @@ class HunGuangAttack(skill.TargetSkill):
             self.addAffect(affect_util.SplashHurt(hurt, position = target, owner = self.owner))
         self.owner.isMovable = False
     
+    def getSoloAITarget(self):
+        if self.owner.enemy.positionLastFrame not in self.allTargets(): return self.getRandomTarget()
+        target = self.owner.enemy.positionLastFrame
+        self.owner.token += str(target.index)
+        self.owner.tokenIndex += 1
+        self.targets.append(target)
+        return target
+
     def allTargets(self):
         return self.owner.position.neighbors
 
@@ -96,6 +105,14 @@ class HunGuangMove(skill.TargetSkill):
         if super().isCastable() and self.owner.isMovable and self.allTargets() != [] and (self.owner.endurance > 0 or self.owner.hasState("hoistSword")):
             return True
         return False
+    
+    def getSoloAITarget(self):
+        if self.owner.enemy.positionLastFrame not in self.allTargets(): return self.getRandomTarget()
+        target = self.owner.enemy.positionLastFrame
+        self.owner.token += str(target.index)
+        self.owner.tokenIndex += 1
+        self.targets.append(target)
+        return target
     
     def cast(self):
         super().cast()
@@ -230,8 +247,20 @@ class HunGuangR1(skill.TargetSkill):
 
     def allTargets(self):
         return self.owner.position.neighbors
-    
-class HunGuangR2(skill.TargetSkill):
+
+    def getSoloAITarget(self):
+        other_targets = []
+        for target in self.allTargets():
+            if target.index != self.owner.position.index: other_targets.append(target)
+        if len(other_targets) == 0: return self.getRandomTarget()
+        index = random.choice(other_targets)
+        target = self.allTargets()[index]
+        self.owner.token += str(target.index)
+        self.owner.tokenIndex += 1
+        self.targets.append(target)
+        return target
+
+class HunGuangR2(skill.Skill):
     def __init__(self):
         super().__init__()
         self.setName("R-2")
@@ -289,3 +318,11 @@ class HunGuangShunQian(skill.TargetSkill):
                     self.owner.states.remove(state)
             self.owner.hasSword = True
         self.owner.faBao -= 1
+
+    def getSoloAITarget(self):
+        if self.owner.enemy.positionLastFrame not in self.allTargets(): return self.getRandomTarget()
+        target = self.owner.enemy.positionLastFrame
+        self.owner.token += str(target.index)
+        self.owner.tokenIndex += 1
+        self.targets.append(target)
+        return target

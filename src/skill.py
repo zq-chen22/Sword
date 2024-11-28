@@ -138,8 +138,7 @@ class TargetSkill(Skill):
         return None
     
     def getRandomTarget(self):
-        index = random.randrange(len(self.allTargets()))
-        target = self.allTargets()[index]
+        target = random.choice(self.allTargets())
         self.owner.token += str(target.index)
         self.owner.tokenIndex += 1
         self.targets.append(target)
@@ -215,6 +214,11 @@ class TargetSkill(Skill):
             self.getTarget = self.getMixTarget
         if policy == "key":
             self.getTarget = self.getKeyTarget
+        if policy == "soloAI":
+            self.getTarget = self.getSoloAITarget
+
+    def getSoloAITarget(self):
+        pass
 
     def narration(self):
         nar = self.name
