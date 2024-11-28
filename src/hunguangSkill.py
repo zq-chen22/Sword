@@ -57,6 +57,9 @@ class HunGuangGetSword(skill.Skill):
     def cast(self):
         super().cast()
         self.owner.swordPosition = self.owner.position
+        for state in self.owner.states:
+            if state.name == "freeQPasitive":
+                self.owner.states.remove(state)
         self.owner.hasSword = True
         self.owner.isMovable = False
 

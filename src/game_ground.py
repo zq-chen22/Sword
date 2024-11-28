@@ -77,7 +77,7 @@ class GameGround:
             print(f"{self.champions[0].name} wins")
         if self.champions[1].isSurvive() and not self.champions[0].isSurvive():
             print(f"{self.champions[0].name} wins")
-        if self.champions[1].isSurvive() and not self.champions[0].isSurvive():
+        if not self.champions[1].isSurvive() and not self.champions[0].isSurvive():
             print(f"It's a draw")
         for champion in self.champions:
             print(f"{champion.name}'s token:")
