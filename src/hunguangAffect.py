@@ -42,6 +42,7 @@ class HunGuangForceMove(affect.Affect):
         super().__init__(**kwarg)
         self.setName("HunGuangAddQLayerPasitiveFeedback")
         self.destination = destination
+        self.priority = 500
 
     def getTargets(self):
         targets = []

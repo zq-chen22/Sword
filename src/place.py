@@ -1,3 +1,6 @@
+import pygame
+from settings import *
+
 class Place:
 
     placeId = 0
@@ -14,6 +17,7 @@ class Place:
         self.cname = f"地点{Place.placeId}"
         self.window = None
         self.placeImg = None
+        self.showTitle = None
     
     def setName(self, name):
         self.name = name
@@ -52,5 +56,30 @@ class Place:
     
     def placeImgInit(self):
         pass
+
+    def showTargetAt(self, pos, champion, button):
+        WIN = pygame.display.get_surface()
+        lines = []
+        font = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 50)
+        charFont = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 70)
+        if champion.color == "Red":
+            color = MAROON
+            buttonColor = SALMON
+        if champion.color == "Blue":
+            color = MIDNIGHTBLUE
+            buttonColor = SHALLOWBLUE
+        char = charFont.render(str(button),True, buttonColor)
+        WIN.blit(char, (pos[0]-10, pos[1]-40))
+        for l in range(int((len(self.showTitle)+3)/4)):
+            for i in range(4):
+                if l * 4 + i + 1 > len(self.showTitle):
+                    break
+                char = font.render(self.showTitle[l*4 + i],True, color)
+                if i == 0:
+                    lines.append((char, (pos[0] + 50 * l, pos[1])))
+                else:
+                    lines.append((char, (lines[-1][1][0], lines[-1][0].get_height() + lines[-1][1][1])))
+        for i in lines:
+            WIN.blit(i[0], i[1])
 
 

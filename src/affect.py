@@ -8,7 +8,6 @@ class AffectProperty:
             damage += state.property.damage
         return damage
 
-
 class Affect:
     '''Here an affect is what a skill adds on a place. An affect will settle at the end of a turn. 
     The owner of an affect is the champion with the skill that produces this effect'''

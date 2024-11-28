@@ -57,6 +57,9 @@ class HunGuangGetSword(skill.Skill):
     def cast(self):
         super().cast()
         self.owner.swordPosition = self.owner.position
+        for state in self.owner.states:
+            if state.name == "freeQPasitive":
+                self.owner.states.remove(state)
         self.owner.hasSword = True
         self.owner.isMovable = False
 
@@ -257,3 +260,32 @@ class HunGuangR2(skill.TargetSkill):
 
     def allTargets(self):
         return self.owner.position.neighbors
+    
+class HunGuangShunQian(skill.TargetSkill):
+    def __init__(self):
+        super().__init__()
+        self.setName("F")
+        self.setButton("F")
+        self.addLabels("faBao", "move")
+        self.getTarget = self.getRandomTarget
+        self.showTitle = "瞬迁"
+
+    def allTargets(self):
+        return self.owner.position.neighbors
+
+    def isCastable(self):
+        if super().isCastable() and self.owner.faBao > 0:
+            return True
+        return False
+    
+    def cast(self):
+        super().cast()
+        target = self.getTarget()
+        target.setChampion(self.owner)
+        if not self.owner.hasSword and self.owner.swordPosition == target:
+            for state in self.owner.states:
+                if state.name == "freeQPasitive":
+                    self.owner.getState(HunGuangHoistSword(owner = self.owner))
+                    self.owner.states.remove(state)
+            self.owner.hasSword = True
+        self.owner.faBao -= 1

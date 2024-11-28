@@ -5,6 +5,7 @@ import pygame
 import cv2
 import numpy as np
 import util
+import client
 
 class InTurnProperty:
     def __init__(self):
@@ -32,6 +33,7 @@ class Champion:
         self.policy = None
         self.maxHealth = None
         self.hasUtimate = True
+        self.faBao = 1
         self.title = "DefaultChampion"
         if self.name is None:
             self.name = f"champion{Champion.championId}"
@@ -54,6 +56,7 @@ class Champion:
         self.healthSample = None
         self.emptyHealthSample = None
         self.figureImg = None
+        self.webID = None
         # self.window = WindowProperty()
 
     def narration(self):
@@ -149,6 +152,10 @@ class Champion:
 
 
     def midTurn(self, **kwarg):
+        if MODE == "webset" and self.policy == "token":
+            print("download data..")
+            client.download(str(self.webID))
+        tokenIndex = self.tokenIndex
         self.state = "midTurn"
         if "log" in kwarg.keys():
             kwarg["log"][-1] += f"{self.title} {self.name} chooses to take the following moves.\n"
@@ -157,6 +164,8 @@ class Champion:
             if choosedSkill.button == ".":
                 break
             self.castSkill(choosedSkill)
+            if "skillList" in kwarg.keys():
+                kwarg["skillList"][self].append({"skill": choosedSkill, "targets": choosedSkill.targets})
             if "log" in kwarg.keys():
                 kwarg["log"][-1] += choosedSkill.narration()
                 kwarg["log"][-1] += ","
@@ -167,6 +176,11 @@ class Champion:
         else:
             self.tokenIndex += 1
             self.token += " "
+        if MODE == "webset" and not self.policy == "token":
+            print("upload data..")
+            client.upload(str(self.webID) + "&" + self.token[tokenIndex:self.tokenIndex])
+
+            
 
     def chooseSkillRandom(self):
         skill = random.choice(self.castableSkills())
@@ -220,7 +234,7 @@ class Champion:
         for skill in self.castableSkills():
             if button.isalpha():
                 if button in (skill.button.upper(), skill.button.lower()):
-                    self.token += button
+                    self.token += skill.button
                     self.tokenIndex += 1
                     return skill
             elif button == skill.button:
@@ -276,7 +290,6 @@ class Champion:
                     lines.append((char, (lines[-1][1][0], lines[-1][0].get_height() + lines[-1][1][1])))
         for i in lines:
             WIN.blit(i[0], i[1])
-
         for i, k in enumerate(buttonDict.keys()):
             isActive = False
             for skill in buttonDict[k]:
@@ -288,6 +301,17 @@ class Champion:
                 buttonDict[k][0].showAt(skillPos)
             skillPos[0] += int((len(skill.showTitle)-1)/4) * 50 + 70
 
+    def reportSkills(self, skillList):
+        if self.showPosition == "Right":
+            pos = np.array((0.5 * WIDTH + 30, 250))
+        if self.showPosition == "Left":
+            pos = np.array((0.5 * WIDTH + 25, 380))        
+            for item in skillList:
+                # item["skill"].showAt(pos, targets = item["targets"])
+                pos[0] -= int((len(item["skill"].showTitle)-1)/4) * 50 + 70
+        for item in skillList:
+            item["skill"].showReportAt(pos, targets = item["targets"])
+            pos[0] += int((len(item["skill"].showTitle)-1)/4) * 50 + 70
     
     def showStates(self, pos):
         WIN = pygame.display.get_surface()

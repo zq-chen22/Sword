@@ -4,6 +4,7 @@ class GameGround:
         self.places = []
         self.champions = []
         self.motionLog = [""]
+        self.gameover = False
 
     def insertPlace(self, place):
         self.places.append(place)
@@ -66,3 +67,20 @@ class GameGround:
         print(self.narration(), end="")
         self.midTurn()
         self.afterTurn()
+        if self.checkWin():
+            exit()
+
+    def checkWin(self):
+        if self.gameover or (self.champions[0].isSurvive() and self.champions[1].isSurvive()):
+           return False
+        if self.champions[0].isSurvive() and not self.champions[1].isSurvive():
+            print(f"{self.champions[0].name} wins")
+        if self.champions[1].isSurvive() and not self.champions[0].isSurvive():
+            print(f"{self.champions[0].name} wins")
+        if not self.champions[1].isSurvive() and not self.champions[0].isSurvive():
+            print(f"It's a draw")
+        for champion in self.champions:
+            print(f"{champion.name}'s token:")
+            print(champion.token)
+        self.gameover = True
+        return True

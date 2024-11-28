@@ -66,17 +66,21 @@ class HunGuangHeChen(state.State):
 
     def deal(self):
         for skillAffect in self.owner.property.skillAffects:
-            damage = 0
-            for affect in skillAffect["affects"]:
-                damage += affect.property.getDamage()
-            if damage > 0:
-                self.owner.maxHealth += 1
-                self.owner.getState(state_util.Heal(damage))
-                if "endurance" in skillAffect["skill"].kwargs.keys():
-                    self.owner.recoverEndurance(1 + skillAffect["skill"].kwargs["endurance"])
-                else:
-                    self.owner.recoverEndurance(1)
+            if 'hurt' in skillAffect["skill"].skill.labels:
+                damage = 0
+                targets = []
+                for affect in skillAffect["affects"]:
+                    damage += affect.property.getDamage()
+                    targets += affect.getTargets()
+                if len(targets) > 0:
+                    self.owner.maxHealth += 1
+                    self.owner.getState(state_util.Heal(damage))
+                    if "endurance" in skillAffect["skill"].kwargs.keys():
+                        self.owner.recoverEndurance(1 + skillAffect["skill"].kwargs["endurance"])
+                    else:
+                        self.owner.recoverEndurance(1)
                 return
+
         if not self.owner.property.isHurt:
             self.owner.nextTurnStates.append(self)
     
@@ -127,7 +131,7 @@ class HunGuangOnSky(state.State):
         return f"×{self.duration + 1}"
 
     def ownerCanCastSkill(self, skill):
-        if skill.name not in ("R-2", "End"):
+        if skill.name not in ("R-2", "End", "F"):
             return False
         return True
 

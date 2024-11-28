@@ -1,7 +1,8 @@
 # the main game
 import sys
-
-sys.path.append('E:\game\Sword\src')
+import os
+PATH = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(os.path.join(PATH, "src"))
 
 from champion import Champion
 from place import Place

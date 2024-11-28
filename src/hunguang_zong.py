@@ -25,6 +25,7 @@ class HunGuang(zong.JianZong):
         self.getSkill(HunGuangE())
         self.getSkill(HunGuangR1())
         self.getSkill(HunGuangR2())
+        self.getSkill(HunGuangShunQian())
         self.getSkill(skill.GiveUp())
 
     def refresh(self):
@@ -88,7 +89,8 @@ class HunGuang(zong.JianZong):
             if self.showPosition == "Left":
                 WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
             if self.showPosition == "Right":
-                WIN.blit(state_subtitle, np.array((WIDTH - state_subtitle.get_width(), 0)) - np.array((1, -1)) * np.array((state_pos[0] - 20, state_pos[1] + state_title.get_height() - 20)))
+                WIN.blit(state_subtitle, np.array((WIDTH - state_subtitle.get_width(), 0)) - np.array((1, -1)) * np.array((state_pos[0] - 20
+                                                                                                                           , state_pos[1] + state_title.get_height() - 20)))
             state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
         super().showStates(state_pos)
             # for state in self.states:
