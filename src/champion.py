@@ -332,6 +332,40 @@ class Champion:
         for item in skillList:
             item["skill"].showReportAt(pos, targets = item["targets"])
             pos[0] += int((len(item["skill"].showTitle)-1)/4) * 50 + 70
+
+    def playSkillAtFrame(self, skillList, frame_id):
+        WIN = pygame.display.get_surface()
+        if self.showPosition == "Right":
+            pos = np.array((0.5 * WIDTH + 70, 170))
+        if self.showPosition == "Left":
+            pos = np.array((0.5 * WIDTH - 670, 170))
+        animaRoot = f"render/{self.title}{self.color}"
+        animaDirDefault = "free"
+        for item in skillList:
+            if frame_id <= 130:
+                if item["skill"].animaDir is not None:
+                    framePath = os.path.join(animaRoot, item["skill"].animaDir, "frame{:04d}.png".format(frame_id))
+                else:
+                    framePath = os.path.join(animaRoot, animaDirDefault, "frame{:04d}.png".format(frame_id))
+                
+                frame_id -= 130
+                break
+            else:
+                frame_id -= 130
+        if frame_id > 0:
+            framePath = os.path.join(animaRoot, animaDirDefault, "frame{:04d}.png".format(frame_id%250 +1))
+        img = cv2.imread(framePath, cv2.IMREAD_UNCHANGED)
+        if self.showPosition == "Left":
+            img = img[:, ::-1]
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+        # img[:, :, 3] = np.clip(np.sum(255 - img[:, :, :3], axis=-1), 200, 455) - 200
+        # import code
+        # code.interact(local=dict(globals(), **locals()))
+        # img[:, :, 3] = 0
+        skillImg = pygame.image.frombuffer(img.tostring(), img.shape[1::-1], "BGRA")
+        skillImg = pygame.transform.scale(skillImg, (640, 360))
+        WIN.blit(skillImg, pos)        
+    
     
     def showStates(self, pos):
         WIN = pygame.display.get_surface()

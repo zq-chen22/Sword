@@ -66,12 +66,24 @@ class GameWindow(GameGround):
 			champion.showBar()
 			champion.showPlace()
 
+	def freshScreen(self):
+		frame_id = 0
+		while True:
+			frame_id += 1
+			self.update()
+			for champion in self.champions:
+				champion.reportSkills(self.skillList[champion])
+				champion.playSkillAtFrame(self.skillList[champion], frame_id)
+			self.showScreen()
+			pygame.display.update()
+			if util.getPygameKey() != '':
+				break
+			pygame.time.Clock().tick(FPS)
+
 	def reportLog(self):
-		self.update()
+		self.freshScreen()
 		for champion in self.champions:
 			champion.reportSkills(self.skillList[champion])
-		self.checkWin()
-		self.showScreen()
 
 	def showScreen(self):
 		WIN = pygame.display.get_surface()
@@ -83,11 +95,6 @@ class GameWindow(GameGround):
 		if not self.gameover:
 			line = font.render("回合结束 按任意键继续……",True, BLACK)
 		WIN.blit(line, (0.5 * WIDTH - 0.5 * line.get_width(), HEIGHT - 50 - line.get_height()))
-		pygame.display.update()
-		while True:
-			if util.getPygameKey() != '':
-				break
-			pygame.time.Clock().tick(FPS)
 
 	def checkWin(self):
 		if (self.champions[0].isSurvive() and self.champions[1].isSurvive()):

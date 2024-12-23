@@ -13,6 +13,7 @@ class HunGuangAttack(skill.TargetSkill):
         self.setButton("A")
         self.addLabels("hurt")
         self.showTitle = "剑击"
+        self.animaDir = "attack"
         
     def isCastable(self):
         if super().isCastable() and self.owner.isMovable and self.owner.hasSword and self.owner.endurance > 0 and self.allTargets() != []:
@@ -97,6 +98,7 @@ class HunGuangMove(skill.TargetSkill):
         self.addLabels("move")
         self.getTarget = self.getRandomTarget
         self.showTitle = "驰越"
+        self.animaDir = "move"
 
     def allTargets(self):
         return self.owner.position.neighbors
@@ -133,6 +135,7 @@ class HunGuangQ1(skill.Skill):
         self.setButton("Q")
         self.addLabels("spell")
         self.showTitle = "浑光起"
+        self.animaDir = "skillQ1"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasSword and self.owner.endurance > 0 and self.owner.isMovable and not self.owner.hasState("hoistSword"):
@@ -153,6 +156,7 @@ class HunGuangQ2(skill.Skill):
         self.addLabels("hurt" ,"spell")
         self.layer = 1
         self.showTitle = "浑光坠"
+        self.animaDir = "skillQ2"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasSword and self.owner.hasState("hoistSword"):
@@ -182,6 +186,7 @@ class HunGuangW(skill.Skill):
         self.setButton("W")
         self.addLabels("spell")
         self.showTitle = "和尘术"
+        self.animaDir = "skillW"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasSword and self.owner.endurance > 0 and self.owner.isMovable and not self.owner.hasState("heChen"):
@@ -202,6 +207,7 @@ class HunGuangE(skill.Skill):
         self.addLabels("hurt", "spell")
         self.canUse = True
         self.showTitle = "横扫千军"
+        self.animaDir = "skillE"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasSword and self.owner.endurance > 0 and self.owner.isMovable and self.canUse:
@@ -228,6 +234,7 @@ class HunGuangR1(skill.TargetSkill):
         self.addLabels("spell", "move")
         self.getTarget = self.getRandomTarget
         self.showTitle = "神兵无影"
+        self.animaDir = "skillR1"
 
     def isCastable(self):
         if super().isCastable() and self.owner.hasSword and self.owner.isMovable and self.owner.hasUtimate and not self.owner.hasState("hoistSword") and self.allTargets() != []:

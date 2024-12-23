@@ -3,7 +3,7 @@ import os
 
 WIDTH    = 1280	
 HEIGHT   = 720
-FPS      = 60
+FPS      = 24
 
 WATER_COLOR = '#71ddee'
 UI_BG_COLOR = '#222222'

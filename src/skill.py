@@ -17,6 +17,7 @@ class Skill:
         self.labels = []
         self.targets = []
         self.showTitle = "测试技能"
+        self.animaDir = None
 
     def addLabels(self, *arg):
         for label in arg:
