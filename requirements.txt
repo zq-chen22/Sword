@@ -1,4 +1,4 @@
 opencv-python
 numpy
 pygame
-an2cn
+cn2an
