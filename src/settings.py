@@ -10,7 +10,7 @@ UI_BG_COLOR = '#222222'
 UI_BORDER_COLOR = '#111111'
 TEXT_COLOR = '#EEEEEE'
 MAROON = '#800000'
-BLACK = '#000000'
+BLACK = '#242424'
 SALMON = '#FA8072'
 SCARLET = "#FF2400"
 IRON = '#48494B'
@@ -22,6 +22,7 @@ FIREBRICK = "#B22222"
 MIDNIGHTBLUE = "#16264C"
 DEEPBLUE = "#004C99"
 SHALLOWBLUE = "#6D89DF"
+DARKGRAY = "#242424"
 
 PATH = os.path.dirname(os.path.dirname(__file__))
 MODE = "window"  # "webset"/"window"/"terminal"/"none"

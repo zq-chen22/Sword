@@ -56,9 +56,9 @@ class GameWindow(GameGround):
 		WIN.fill(WATER_COLOR)
 		WIN.blit(self.BG, (0, 0))
 		WIN.blit(self.taichi, (0.5 * (WIDTH - self.taichi.get_width()), 100))
-		line = self.titleFont.render("华山论剑第{}回".format(cn2an.an2cn(self.turn, "up")), True, pygame.Color(0, 0, 0, a = 0.7))
+		line = self.titleFont.render("华山论剑第{}回".format(cn2an.an2cn(self.turn, "up")), True, BLACK)
 		WIN.blit(line, (0.5 * WIDTH - 0.5 * line.get_width() - 50, 20 ))
-		patch = self.smallFont.render("版本号 2 - 5 - 2", True, pygame.Color(0, 0, 0, a = 0.7))
+		patch = self.smallFont.render("版本号 2 - 5 - 2", True, BLACK)
 		WIN.blit(patch, (min(0.5 * WIDTH + 0.45 * line.get_width() -50, WIDTH - 200 - patch.get_width()) , line.get_rect().y + line.get_height() + 5))
 		for place in self.places:
 			place.showAt(place.screenPos)
@@ -70,14 +70,45 @@ class GameWindow(GameGround):
 		self.update()
 		for champion in self.champions:
 			champion.reportSkills(self.skillList[champion])
+		self.checkWin()
 		self.showScreen()
 
 	def showScreen(self):
+		WIN = pygame.display.get_surface()
+		sideFont = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 35)
+		font = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 50)
+		charFont = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 70)
+		if self.gameover:
+			line = font.render("决斗结束 按任意键退出……",True, BLACK)
+		if not self.gameover:
+			line = font.render("回合结束 按任意键继续……",True, BLACK)
+		WIN.blit(line, (0.5 * WIDTH - 0.5 * line.get_width(), HEIGHT - 50 - line.get_height()))
 		pygame.display.update()
-		for i in range(5 * FPS):
+		while True:
 			if util.getPygameKey() != '':
 				break
 			pygame.time.Clock().tick(FPS)
+
+	def checkWin(self):
+		if (self.champions[0].isSurvive() and self.champions[1].isSurvive()):
+			return False
+		WIN = pygame.display.get_surface()
+		gigaFont = pygame.font.Font(os.path.join(PATH, "fonts", "毛笔书法字体(启功体)繁启体.TTF"), 100)
+		color = BLACK
+		if self.champions[0].isSurvive() and not self.champions[1].isSurvive():
+			if self.champions[0].color == "Blue": color = DEEPBLUE
+			if self.champions[0].color == "Red": color = FIREBRICK
+			line = gigaFont.render("胜利",True, color)
+		if self.champions[1].isSurvive() and not self.champions[0].isSurvive():
+			if self.champions[1].color == "Blue": color = DEEPBLUE
+			if self.champions[1].color == "Red": color = FIREBRICK
+			line = gigaFont.render("失败",True, color)
+		if not self.champions[1].isSurvive() and not self.champions[0].isSurvive():
+			color = BLACK
+			line = gigaFont.render("平局",True, color)
+		WIN.blit(line, (0.5 * WIDTH - 0.5 * line.get_width(), 180))
+		self.gameover = True
+		return True
 
 	def reArrangeShowPosition(self):
 		showPositions = ["Left", "Right", ]

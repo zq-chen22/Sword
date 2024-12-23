@@ -5,6 +5,7 @@ from settings import *
 import util
 import pygame
 import numpy as np
+import random
 
 class HunGuang(zong.JianZong):
     def __init__(self):
@@ -51,7 +52,7 @@ class HunGuang(zong.JianZong):
 
     def narration(self):
         nar = super().narration()
-        nar += f". Now he has {self.skills[5].layer} stack(s) of Q"
+        nar += f". Now he has {self.peepSkill('Q-2').layer} stack(s) of Q"
         return nar
 
     def showStates(self, pos):
@@ -65,6 +66,17 @@ class HunGuang(zong.JianZong):
         if self.showPosition == "Right":
             WIN.blit(state_title, np.array((WIDTH - state_title.get_width(), 0)) - np.array((1, -1)) * state_pos) 
         state_subtitle = font2.render(f"×{self.endurance}", True, BLACK)
+        if self.showPosition == "Left":
+            WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
+        if self.showPosition == "Right":
+            WIN.blit(state_subtitle, np.array((WIDTH - state_subtitle.get_width(), 0)) - np.array((1, -1)) * np.array((state_pos[0] - 20, state_pos[1] + state_title.get_height() - 20)))
+        state_pos = (state_pos[0], state_pos[1] + state_title.get_height())
+        state_title = font1.render("浑光", True, BLACK)
+        if self.showPosition == "Left":
+            WIN.blit(state_title, state_pos) 
+        if self.showPosition == "Right":
+            WIN.blit(state_title, np.array((WIDTH - state_title.get_width(), 0)) - np.array((1, -1)) * state_pos)
+        state_subtitle = font2.render(f"×{self.peepSkill('Q-2').layer}", True, BLACK)
         if self.showPosition == "Left":
             WIN.blit(state_subtitle, (state_pos[0] + state_title.get_width() - 15, state_pos[1] + state_title.get_height() - 20))
         if self.showPosition == "Right":
@@ -105,15 +117,56 @@ class HunGuang(zong.JianZong):
     def chooseSkillSoloAI(self):
         # Q start
         # W/move/set a new Q
-        castableSkillsButtons = {skill.button: 1 for skill in self.castableSkills()}
-        if self.endurance == 0:
-            button = "S"
-            for skill in self.castableSkills():
-                if button.isalpha():
-                    if button in (skill.button.upper(), skill.button.lower()):
-                        self.token += skill.button
-                        self.tokenIndex += 1
-                        return skill
-        self.position.index == self.enemy.position.index
-        exit()
+        castableSkillsButtons = [skill.button for skill in self.castableSkills()]
+        castableSkillsNames = [skill.name for skill in self.castableSkills()]
+        button = None
+        if "R-2" in castableSkillsNames and button is None:
+            if random.uniform(0., 1.) < 0.5 + 0.4 * (self.peepState("onSky").duration == 0):
+                button = "R"
+        if "E" in castableSkillsButtons and button is None:
+            if random.uniform(0., 1.) < (0.1 + \
+                0.3 * (self.position.index == self.enemy.positionLastFrame.index) * \
+                    (self.positionLastFrame.index == self.enemy.positionLastFrame.index)) / (self.endurance ** 2):
+                button = "E"
+        if "Q-1" in castableSkillsNames and button is None:
+            if random.uniform(0., 1.) < 1.0 - 0.3 * (self.position.index == self.enemy.positionLastFrame.index):
+                button = "Q"
+        elif "Q-2" in castableSkillsNames and button is None:
+            if random.uniform(0., 1.) < 0.25 + 0.5 * (self.position.index == self.enemy.positionLastFrame.index) - 0.25 * (self.positionLastFrame.index == self.enemy.positionLastFrame.index):
+                button = "Q"
+            elif self.peepState("hoistSword").duration == 0 and not self.isMovable:
+                button = "Q"
+        if button is None:
+            weight = {}
+            if self.isMovable:
+                if "W" in castableSkillsButtons and "Q-2" in castableSkillsNames: weight["W"] = 1
+                if "M" in castableSkillsButtons and self.position.index != self.enemy.positionLastFrame.index: weight["M"] = 2
+                if "S" in castableSkillsButtons and self.peepSkill("Q-2").layer == 1 and (self.maxEndurance - self.endurance) > 0: 
+                    weight["S"] = self.maxEndurance - self.endurance
+                if "S" in castableSkillsButtons and self.endurance == 0: weight["S"] = 3
+                if "R-1" in castableSkillsNames: 
+                    weight["R"] = (2 * self.peepSkill("Q-2").layer - 1)/(self.endurance + 1) ** 2
+                    if self.position.index == self.enemy.positionLastFrame.index: weight["R"] *= 2
+            if len(weight) > 0:
+                sum = 0.
+                for key in weight:
+                    sum += weight[key]
+                pointer = sum * random.uniform(0., 1.)
+                summer = 0.
+                for key in weight:
+                    if summer <= pointer < summer + weight[key]: 
+                        button = key
+                        break
+                    summer += weight[key]
+        if button is None: button = "."
+        for skill in self.castableSkills():
+            if button.isalpha():
+                if button in (skill.button.upper(), skill.button.lower()):
+                    self.token += skill.button
+                    self.tokenIndex += 1
+                    return skill
+            elif button == skill.button:
+                self.token += button
+                self.tokenIndex += 1
+                return skill
     

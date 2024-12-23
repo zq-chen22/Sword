@@ -253,6 +253,18 @@ class Champion:
             if state.name == stateName:
                 return True
         return False
+
+    def peepState(self, stateName):
+        for state in self.states:
+            if state.name == stateName:
+                return state
+        return None 
+    
+    def peepSkill(self, skillName):
+        for skill in self.skills:
+            if skill.name == skillName:
+                return skill
+        return None 
     
     def getEnemy(self, champ):
         self.enemy = champ
@@ -311,9 +323,9 @@ class Champion:
 
     def reportSkills(self, skillList):
         if self.showPosition == "Right":
-            pos = np.array((0.5 * WIDTH + 30, 250))
+            pos = np.array((0.5 * WIDTH + 30, 340)) # 250 if up and down overlay
         if self.showPosition == "Left":
-            pos = np.array((0.5 * WIDTH + 25, 380))        
+            pos = np.array((0.5 * WIDTH + 25, 340))        
             for item in skillList:
                 # item["skill"].showAt(pos, targets = item["targets"])
                 pos[0] -= int((len(item["skill"].showTitle)-1)/4) * 50 + 70

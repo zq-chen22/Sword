@@ -250,11 +250,16 @@ class HunGuangR1(skill.TargetSkill):
 
     def getSoloAITarget(self):
         other_targets = []
+        for skillAffect in self.owner.property.skillAffects:
+            if 'hurt' in skillAffect["skill"].skill.labels:
+                target = self.owner.position
+                self.owner.token += str(target.index)
+                self.owner.tokenIndex += 1
+                return target
         for target in self.allTargets():
             if target.index != self.owner.position.index: other_targets.append(target)
         if len(other_targets) == 0: return self.getRandomTarget()
-        index = random.choice(other_targets)
-        target = self.allTargets()[index]
+        target = random.choice(other_targets)
         self.owner.token += str(target.index)
         self.owner.tokenIndex += 1
         self.targets.append(target)

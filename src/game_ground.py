@@ -71,12 +71,12 @@ class GameGround:
             exit()
 
     def checkWin(self):
-        if self.gameover or (self.champions[0].isSurvive() and self.champions[1].isSurvive()):
+        if (self.champions[0].isSurvive() and self.champions[1].isSurvive()):
            return False
         if self.champions[0].isSurvive() and not self.champions[1].isSurvive():
             print(f"{self.champions[0].name} wins")
         if self.champions[1].isSurvive() and not self.champions[0].isSurvive():
-            print(f"{self.champions[0].name} wins")
+            print(f"{self.champions[1].name} wins")
         if not self.champions[1].isSurvive() and not self.champions[0].isSurvive():
             print(f"It's a draw")
         for champion in self.champions:
